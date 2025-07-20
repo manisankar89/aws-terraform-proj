@@ -37,8 +37,8 @@ pipeline {
 
     stage('Terraform Action') {
       steps {
-        input message: 'Proceed with Terraform ${params.ACTION}?', ok: 'Continue'
-        sh 'pwd;cd terraform/ ; terraform ${params.ACTION} -auto-approve'
+        input message: "Proceed with Terraform ${params.ACTION}?", ok: 'Continue'
+        sh "pwd; cd terraform/ ; terraform ${params.ACTION} -auto-approve"
         }
       }
   }
