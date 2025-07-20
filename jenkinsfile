@@ -9,7 +9,7 @@ pipeline {
     stage('Checkout Source') {
       steps {
         // Add credentials if repo is private, e.g., credentialsId: 'your-github-credentials-id'
-        git branch: 'main', url: 'https://github.com/manisankar89/aws-terraform-proj/main.tf'
+        git branch: 'main', url: 'https://github.com/manisankar89/aws-terraform-proj/'
       }
     }
 
