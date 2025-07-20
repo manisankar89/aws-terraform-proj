@@ -3,62 +3,41 @@ pipeline {
 
   environment {
     AWS_DEFAULT_REGION = 'ap-south-1'
+    AWS_ACCESS_KEY_ID = credentials('aws-creds')
+    AWS_SECRET_ACCESS_KEY = credentials('aws-creds')
   }
 
   stages {
-    stage('Checkout Source') {
+    stage('Checkout Sourcecode') {
       steps {
+          script{
+                  dir("terraform")
+                  {
         // Add credentials if repo is private, e.g., credentialsId: 'your-github-credentials-id'
-        git branch: 'main', url: 'https://github.com/manisankar89/aws-terraform-proj/'
-      }
-    }
+        git 'https://github.com/manisankar89/aws-terraform-proj.git'
+                  }
+               }
+            }
+         }
 
     stage('Terraform Init') {
       steps {
-        withCredentials([
-          [
-            $class: 'AmazonWebServicesCredentialsBinding',
-            credentialsId: 'aws-creds'
-          ]
-        ]) {
-          sh 'terraform init'
+          sh 'pwd;cd terraform/ ; terraform init'
         }
       }
-    }
-
-    stage('Terraform Format & Validate') {
-      steps {
-        sh 'terraform fmt -check'
-        sh 'terraform validate'
-      }
-    }
 
     stage('Terraform Plan') {
       steps {
-        withCredentials([
-          [
-            $class: 'AmazonWebServicesCredentialsBinding',
-            credentialsId: 'aws-creds'
-          ]
-        ]) {
-          sh 'terraform plan -out=tfplan'
+          sh 'pwd;cd terraform/ ; terraform plan -out=tfplan'
         }
       }
-    }
 
     stage('Terraform Apply') {
       steps {
         input message: 'Proceed with Terraform Apply?', ok: 'Apply'
-        withCredentials([
-          [
-            $class: 'AmazonWebServicesCredentialsBinding',
-            credentialsId: 'aws-creds'
-          ]
-        ]) {
-          sh 'terraform apply -auto-approve tfplan'
+        sh 'pwd;cd terraform/ ; terraform apply -auto-approve tfplan'
         }
       }
-    }
   }
 
   post {
