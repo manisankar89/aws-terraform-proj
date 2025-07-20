@@ -6,6 +6,9 @@ pipeline {
     AWS_ACCESS_KEY_ID = credentials('aws-creds')
     AWS_SECRET_ACCESS_KEY = credentials('aws-creds')
   }
+  parameters {
+   choice (name: 'ACTION' , choices: [ 'apply' , 'destroy'] , description : 'Terraform Action')
+  }
 
   stages {
     stage('Checkout Sourcecode') {
@@ -32,10 +35,10 @@ pipeline {
         }
       }
 
-    stage('Terraform Apply') {
+    stage('Terraform Action') {
       steps {
-        input message: 'Proceed with Terraform Apply?', ok: 'Apply'
-        sh 'pwd;cd terraform/ ; terraform apply -auto-approve tfplan'
+        input message: 'Proceed with Terraform ${params.ACTION}?', ok: 'Continue'
+        sh 'pwd;cd terraform/ ; terraform ${params.ACTION} -auto-approve'
         }
       }
   }
